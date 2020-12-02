@@ -1,3 +1,4 @@
+#  https://www.notion.so/d60d7fed03e844dc87fe63c297d59826
 import re
 
 emails = ['abc.test@gmail.com, xyz@test.in, test.first@analyticsvidhya.com, first.test@rest.biz']
@@ -17,7 +18,22 @@ def task_1():
         '123, fewfew',
     ]
     for word in word_list:
-        print(first_word.search(word))
+        print(first_word.search(word).group())
+
+
+def task_2():
+    two_symbol = re.compile(r'\b\w{2}')
+    word_list = [
+        ',./ sdfsdf',
+        'Ddfsdf',
+        '@@##,sdfsdf',
+        '123_sdfsdf',
+        '123sdfsdf',
+        ', s,dfsdf',
+        '123, fewfew',
+    ]
+    for word in word_list:
+        print(two_symbol.findall(word))
 
 
 def test_correct_ip():
@@ -50,7 +66,8 @@ def test_incorrect_ip():
 def main():
     # test_correct_ip()
     # test_incorrect_ip()
-    task_1()
+    # task_1()
+    task_2()
 
 
 if __name__ == '__main__':

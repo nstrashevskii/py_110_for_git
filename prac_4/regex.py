@@ -36,6 +36,20 @@ def task_2():
         print(two_symbol.findall(word))
 
 
+def task_3():
+    domain_email = re.compile(r'\w+@(\w+\.\w+)')
+    e_mails = 'abc.test@gmail.com, xyz@test.in, test.first@analyticsvidhya.com, first.test@rest.biz'
+    print(domain_email.findall(e_mails))  # findall ищет только по скобочным группам
+
+
+def task_4():
+    date_str = 'Amit 34-3456 12-05-2007, XYZ 56-4532 11-11-2011, ABC 67-8945 12-01-2009'
+    pattern_date = re.compile(r'(?P<day>\d{2})-(?P<month>\d{2})-(?P<year>\d{4})')
+    for date in pattern_date.finditer(date_str):
+        print(date.groupdict())
+        print(date['day'], '-', date['month'], '-', date['year'])
+
+
 def test_correct_ip():
     ip_list = ['8.8.8.8', '192.168.1.1', '123.231.132.231', '12.123.12.12']
     for ip in ip_list:
@@ -67,8 +81,9 @@ def main():
     # test_correct_ip()
     # test_incorrect_ip()
     # task_1()
-    task_2()
-
+    # task_2()
+    # task_3()
+    task_4()
 
 if __name__ == '__main__':
     main()

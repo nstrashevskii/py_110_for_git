@@ -2,8 +2,6 @@ import re
 import json
 import argparse
 
-books_file = '/Users/nikolaj/PycharmProjects/py_110_for_git/prac_4/books.txt'
-
 
 def create_parser():
     parser = argparse.ArgumentParser()

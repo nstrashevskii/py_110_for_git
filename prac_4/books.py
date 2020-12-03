@@ -12,9 +12,12 @@ def books():
 
     with open(books_file) as f:
         for book in pattern_books.finditer(f.read()):
-            s = book.groupdict()
+            a = book.groupdict()
+            # list_a = list(a.items())
+            # list_a.sort(key=lambda i: i[1], reverse=False)
+            # print(list_a)
             with open('books.json', 'a') as f:
-                json.dump(s, f, indent=4)
+                json.dump(a, f, indent=4)
 
             # print(book['position'], '-', book['book'], '-', book['book_url'], '-', book['autor'], '-',
             # book['recommended'], '-', book['cover_url'], '-', book['description'])

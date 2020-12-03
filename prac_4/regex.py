@@ -50,6 +50,11 @@ def task_4():
         print(date['day'], '-', date['month'], '-', date['year'])
 
 
+def task_5():
+    table = "1NoahEmma2LiamOlivia3MasonSophia4JacobIsabella5WilliamAva6EthanMia7MichaelEmily"
+    pattern_table = r''
+
+
 def test_correct_ip():
     ip_list = ['8.8.8.8', '192.168.1.1', '123.231.132.231', '12.123.12.12']
     for ip in ip_list:
@@ -84,6 +89,7 @@ def main():
     # task_2()
     # task_3()
     task_4()
+
 
 if __name__ == '__main__':
     main()

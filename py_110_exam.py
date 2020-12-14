@@ -8,7 +8,7 @@ from faker import Faker
 BOOKS_TITLE_FILE: str = 'books.txt'
 BOOKS_AUTHOR_FILE: str = 'authors.txt'
 CONF_FILE: str = 'conf.py'
-filename_csv: str = 'books.csv'
+# filename_csv: str = 'books.csv'
 
 pattern_author = re.compile(r'\b[A-Z]\w+\b\s\b[A-Z]\w+\b')
 with open(BOOKS_AUTHOR_FILE) as books_author:
@@ -26,34 +26,43 @@ def isbn13() -> str:
     return fake.isbn13()
 
 
-def clear_json(obj: str = ''):
-    with open(args.f, 'w') as file:
-        json.dump(obj, file, indent=args.ind)
-
-
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--count', type=int, help='count books')
     parser.add_argument('-s', '--sale', type=str, help='sale: yes or no')
     parser.add_argument('-pk', '--pk', type=int, help='start pk', required=False)
     parser.add_argument('-a', type=int, help='number of authors', required=False)
+
     subparser = parser.add_subparsers(dest='action', description='save as json or csv, or show')
     save_parser = subparser.add_parser('save')
+    save_parser.add_argument('-csv', type=str, help='save as csv: yes or None', required=False)
     save_parser.add_argument('-j', type=str, help='save as json: yes or None', required=False)
+
     subparser_json = save_parser.add_subparsers(dest='action', description='filename and indent')
     json_parser = subparser_json.add_parser('json')
     json_parser.add_argument('-f', type=str, help='filename', default='books.json', required=False)
     json_parser.add_argument('-ind', type=int, help='indent', required=False)
-    save_parser.add_argument('-csv', type=str, help='save as csv: yes or None', required=False)
 
     return parser
+
+
+def arguments() -> [int, str]:
+    parsers = create_parser()
+    args = parsers.parse_args()
+    return args
+
+
+def clear_json(obj: str = ''):
+    args = arguments()
+    with open(args.f, 'w') as file:
+        json.dump(obj, file, indent=args.ind)
 
 
 def sale() -> [float, None]:
     """
     :return: размер скидки на книгу
     """
-    if args.sale == 'yes':
+    if arguments().sale == 'yes':
         discount: [float, None] = random.uniform(0, 100)
     else:
         discount = None
@@ -64,10 +73,11 @@ def authors() -> int:
     """
     :return: количество авторов книги
     """
+    args = arguments()
     if args.a is None:
         k: int = random.randint(1, 3)
     else:
-        k: int = args.a
+        k: int = arguments().a
     return k
 
 
@@ -108,9 +118,8 @@ def books_generator(pk: int) -> dict:
     yield book
 
 
-if __name__ == '__main__':
-    parsers = create_parser()
-    args = parsers.parse_args()
+def main():
+    args = arguments()
     clear_json()
     if args.j is None and args.csv is None:
         if args.pk is None:
@@ -150,3 +159,7 @@ if __name__ == '__main__':
     #             with open(filename_csv, 'a') as f:
     #                 file_writer = csv.DictWriter(f, delimiter=",", lineterminator="\n")
     #                 file_writer.writerows(next(books_generator(i+args.pk)))
+
+
+if __name__ == '__main__':
+    main()

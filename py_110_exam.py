@@ -8,11 +8,13 @@ BOOKS_TITLE_FILE: str = 'books.txt'
 BOOKS_AUTHOR_FILE: str = 'authors.txt'
 CONF_FILE: str = 'conf.py'
 
-pattern_author = re.compile(r'\b[A-Z]\w+\b\s\b[A-Z]\w+\b')
-with open(BOOKS_AUTHOR_FILE) as books_author:
-    for i in books_author.readlines():
-        if re.match(pattern_author, i) is None:
-            print(f'в строке {i} ошибка')
+
+def authors_check():
+    pattern_author = re.compile(r'\b[A-Z]\w+\b\s\b[A-Z]\w+\b')
+    with open(BOOKS_AUTHOR_FILE) as books_author:
+        for i in books_author.readlines():
+            if re.match(pattern_author, i) is None:
+                yield i
 
 
 def isbn13() -> str:
@@ -109,6 +111,8 @@ def books_generator(pk: int) -> dict:
 
 def main():
     args = arguments()
+    for i in range(args.a):
+        print('ошибка в файле с авторами', next(authors_check()))
     if args.action is None or args.action == 'show':
         for i in range(args.count):
             print(next(books_generator(i + args.pk)))
@@ -121,4 +125,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
+

@@ -2,13 +2,11 @@ import argparse
 import random
 import json
 import re
-# import csv
 from faker import Faker
 
 BOOKS_TITLE_FILE: str = 'books.txt'
 BOOKS_AUTHOR_FILE: str = 'authors.txt'
 CONF_FILE: str = 'conf.py'
-# filename_csv: str = 'books.csv'
 
 pattern_author = re.compile(r'\b[A-Z]\w+\b\s\b[A-Z]\w+\b')
 with open(BOOKS_AUTHOR_FILE) as books_author:
@@ -28,20 +26,18 @@ def isbn13() -> str:
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--count', type=int, help='count books')
-    parser.add_argument('-s', '--sale', type=str, help='sale: yes or no')
-    parser.add_argument('-pk', '--pk', type=int, help='start pk', required=False)
-    parser.add_argument('-a', type=int, help='number of authors', required=False)
+    parser.add_argument('-c', '--count', type=int, help='count books', default=1)
+    parser.add_argument('-s', '--sale', type=str, default='yes', help='sale: yes or no')
+    parser.add_argument('-pk', '--pk', type=int, help='start pk', default=1, required=False)
+    parser.add_argument('-a', type=int, help='number of authors', default=2, required=False)
 
-    subparser = parser.add_subparsers(dest='action', description='save as json or csv, or show')
+    subparser = parser.add_subparsers(dest='action', description='save as json or show')
+
     save_parser = subparser.add_parser('save')
-    save_parser.add_argument('-csv', type=str, help='save as csv: yes or None', required=False)
-    save_parser.add_argument('-j', type=str, help='save as json: yes or None', required=False)
+    save_parser.add_argument('-f', type=str, help='filename', default='books.json', required=False)
+    save_parser.add_argument('-ind', type=int, help='indent', default=0, required=False)
 
-    subparser_json = save_parser.add_subparsers(dest='action', description='filename and indent')
-    json_parser = subparser_json.add_parser('json')
-    json_parser.add_argument('-f', type=str, help='filename', default='books.json', required=False)
-    json_parser.add_argument('-ind', type=int, help='indent', required=False)
+    show_parser = subparser.add_parser('show')
 
     return parser
 
@@ -62,11 +58,8 @@ def sale() -> [float, None]:
     """
     :return: размер скидки на книгу
     """
-    if arguments().sale == 'yes':
-        discount: [float, None] = random.uniform(0, 100)
-    else:
-        discount = None
-    return discount
+    discount: [float, None] = random.uniform(0, 100)
+    return discount if arguments().sale == 'yes' else None
 
 
 def authors() -> int:
@@ -74,11 +67,7 @@ def authors() -> int:
     :return: количество авторов книги
     """
     args = arguments()
-    if args.a is None:
-        k: int = random.randint(1, 3)
-    else:
-        k: int = arguments().a
-    return k
+    return random.randint(1, 3) if args.a is None else arguments().a
 
 
 def books_generator(pk: int) -> dict:
@@ -120,46 +109,16 @@ def books_generator(pk: int) -> dict:
 
 def main():
     args = arguments()
-    clear_json()
-    if args.j is None and args.csv is None:
-        if args.pk is None:
-            for i in range(args.count):
-                print(next(books_generator(i + 1)))
-        else:
-            for i in range(args.count):
-                print(next(books_generator(i + args.pk)))
-    elif args.j is not None:
-        if args.pk is None:
-            if args.ind is None:
-
-                for i in range(args.count):
-                    with open(args.f, 'a') as f:
-                        json.dump(next(books_generator(i + 1)), f, indent=0)
-            else:
-                for i in range(args.count):
-                    with open(args.f, 'a') as f:
-                        json.dump(next(books_generator(i + 1)), f, indent=args.ind)
-        else:
-            if args.ind is None:
-                for i in range(args.count):
-                    with open(args.f, 'a') as f:
-                        json.dump(next(books_generator(i + args.pk)), f, indent=0)
-            else:
-                for i in range(args.count):
-                    with open(args.f, 'a') as f:
-                        json.dump(next(books_generator(i + args.pk)), f, indent=args.ind)
-    # elif args.csv is not None:
-    #     if args.pk is None:
-    #         for i in range(args.count):
-    #             with open(filename_csv, 'a') as f:
-    #                 file_writer = csv.DictWriter(f, delimiter=",", lineterminator="\n")
-    #                 file_writer.writerows(next(books_generator(i + 1)))
-    #     else:
-    #         for i in range(args.count):
-    #             with open(filename_csv, 'a') as f:
-    #                 file_writer = csv.DictWriter(f, delimiter=",", lineterminator="\n")
-    #                 file_writer.writerows(next(books_generator(i+args.pk)))
+    if args.action is None or args.action == 'show':
+        for i in range(args.count):
+            print(next(books_generator(i + args.pk)))
+    else:
+        clear_json()
+        for i in range(args.count):
+            with open(args.f, 'a') as f:
+                json.dump(next(books_generator(i + args.pk)), f, indent=args.ind)
 
 
 if __name__ == '__main__':
     main()
+    
